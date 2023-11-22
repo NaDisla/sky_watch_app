@@ -10,6 +10,7 @@ class WeatherProvider extends ChangeNotifier {
   Location currentLocation = Location();
   Current currentWeatherInfo = Current();
   bool isLoading = true;
+  static String weatherCondition = "";
 
   WeatherProvider() {
     getWeatherInfo();
@@ -34,8 +35,9 @@ class WeatherProvider extends ChangeNotifier {
   getWeatherInfo() async {
     final jsonResult = await _getJsonData("v1/current.json", "Santo Domingo");
     final weatherInfoResponse = WeatherInfo.fromJson(json.decode(jsonResult));
-    currentLocation = weatherInfoResponse.location!;
-    currentWeatherInfo = weatherInfoResponse.current!;
+    currentLocation = weatherInfoResponse.location;
+    currentWeatherInfo = weatherInfoResponse.current;
+    weatherCondition = currentWeatherInfo.condition!.text;
     isLoading = false;
     notifyListeners();
   }

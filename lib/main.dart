@@ -5,8 +5,15 @@ import 'package:sky_watch_app/screens/screens.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => WeatherProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => WeatherProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BackgroundImageProvider(),
+        ),
+      ],
       child: const SkyWatchApp(),
     ),
   );
@@ -17,9 +24,10 @@ class SkyWatchApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      theme: ThemeData(fontFamily: 'Poppins'),
+      home: const HomeScreen(),
     );
   }
 }

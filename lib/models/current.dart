@@ -1,54 +1,54 @@
 import 'package:sky_watch_app/models/models.dart';
 
 class Current {
-  int lastUpdatedEpoch;
-  String lastUpdated;
-  double tempC;
-  double tempF;
-  int isDay;
-  Condition condition;
-  double windMph;
-  double windKph;
-  int windDegree;
-  String windDir;
-  double pressureMb;
-  double pressureIn;
-  double precipMm;
-  double precipIn;
-  int humidity;
-  int cloud;
-  double feelslikeC;
-  double feelslikeF;
-  double visKm;
-  double visMiles;
-  double uv;
-  double gustMph;
-  double gustKph;
+  int? lastUpdatedEpoch;
+  String? lastUpdated;
+  double? tempC;
+  double? tempF;
+  int? isDay;
+  Condition? condition;
+  double? windMph;
+  double? windKph;
+  int? windDegree;
+  String? windDir;
+  double? pressureMb;
+  double? pressureIn;
+  double? precipMm;
+  double? precipIn;
+  int? humidity;
+  int? cloud;
+  double? feelslikeC;
+  double? feelslikeF;
+  double? visKm;
+  double? visMiles;
+  double? uv;
+  double? gustMph;
+  double? gustKph;
 
   Current({
-    required this.lastUpdatedEpoch,
-    required this.lastUpdated,
-    required this.tempC,
-    required this.tempF,
-    required this.isDay,
-    required this.condition,
-    required this.windMph,
-    required this.windKph,
-    required this.windDegree,
-    required this.windDir,
-    required this.pressureMb,
-    required this.pressureIn,
-    required this.precipMm,
-    required this.precipIn,
-    required this.humidity,
-    required this.cloud,
-    required this.feelslikeC,
-    required this.feelslikeF,
-    required this.visKm,
-    required this.visMiles,
-    required this.uv,
-    required this.gustMph,
-    required this.gustKph,
+    this.lastUpdatedEpoch,
+    this.lastUpdated,
+    this.tempC,
+    this.tempF,
+    this.isDay,
+    this.condition,
+    this.windMph,
+    this.windKph,
+    this.windDegree,
+    this.windDir,
+    this.pressureMb,
+    this.pressureIn,
+    this.precipMm,
+    this.precipIn,
+    this.humidity,
+    this.cloud,
+    this.feelslikeC,
+    this.feelslikeF,
+    this.visKm,
+    this.visMiles,
+    this.uv,
+    this.gustMph,
+    this.gustKph,
   });
 
   factory Current.fromJson(Map<String, dynamic> json) => Current(

@@ -62,8 +62,8 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
-  getWeatherInfo() async {
-    final jsonResult = await _getJsonData("v1/current.json", "Santo Domingo", "");
+  getWeatherInfo({String city = "New York"}) async {
+    final jsonResult = await _getJsonData("v1/current.json", city, "");
     final weatherInfoResponse = WeatherInfo.fromJson(json.decode(jsonResult));
     currentLocation = weatherInfoResponse.location;
     currentWeatherInfo = weatherInfoResponse.current;
@@ -82,8 +82,8 @@ class WeatherProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getForecastInfo() async {
-    final jsonResult = await _getJsonData("v1/forecast.json", "Santo Domingo", "7");
+  getForecastInfo({String city = "New York"}) async {
+    final jsonResult = await _getJsonData("v1/forecast.json", city, "7");
     final forecastResponse = Forecast.fromJson(json.decode(jsonResult));
     forecastDay = forecastResponse.forecast.forecastday;
     notifyListeners();

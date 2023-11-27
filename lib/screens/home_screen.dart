@@ -5,49 +5,50 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sky_watch_app/providers/providers.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int randomImage = Random().nextInt(10);
+  bool isHourlyForecast = true;
+  Map<int, String> days = {
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+    7: "Sunday"
+  };
+  Map<int, String> months = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+  };
 
   @override
   Widget build(BuildContext context) {
     final weatherProvider = Provider.of<WeatherProvider>(context);
     final backgroundImageProvider = Provider.of<BackgroundImageProvider>(context);
-    final double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    int randomImage = Random().nextInt(10);
-    const textShadows = [
-      Shadow(
-        color: Colors.black,
-        blurRadius: 35.0,
-        offset: Offset(2.0, 2.0),
-      ),
-    ];
-    Map<int, String> days = {
-      1: "Monday",
-      2: "Tuesday",
-      3: "Wednesday",
-      4: "Thursday",
-      5: "Friday",
-      6: "Saturday",
-      7: "Sunday"
-    };
-    Map<int, String> months = {
-      1: "January",
-      2: "February",
-      3: "March",
-      4: "April",
-      5: "May",
-      6: "June",
-      7: "July",
-      8: "August",
-      9: "September",
-      10: "October",
-      11: "November",
-      12: "December",
-    };
-    const fewDetailsStyle = TextStyle(color: Colors.white, fontSize: 15.0, shadows: textShadows);
-    final locationDate = weatherProvider.currentLocation.localtime!.split(" ");
-    final updatedDate = weatherProvider.currentWeatherInfo.lastUpdated!.split(" ");
+    final locationDate = //weatherProvider.currentLocation.localtime ??
+        "2023-11-26 21:54".split(" "); //weatherProvider.currentLocation.localtime.split(" ");
+    final updatedDate = //weatherProvider.currentWeatherInfo.lastUpdated ??
+        "2023-11-26 21:58".split(" "); //weatherProvider.currentWeatherInfo.lastUpdated.split(" ");
     DateTime currentDate = DateTime.parse(locationDate[0]);
     String currentStrDate =
         "${days[currentDate.weekday]}, ${months[currentDate.month]} ${currentDate.day} ${currentDate.year}";
@@ -56,6 +57,15 @@ class HomeScreen extends StatelessWidget {
     String dayTime = int.parse(time[0]) <= 11 ? "AM" : "PM";
     String currentStrUpdatedDate =
         "${lastUpdatedDate.month}/${lastUpdatedDate.day}/${lastUpdatedDate.year} ${updatedDate[1]}";
+
+    const textShadows = [
+      Shadow(
+        color: Colors.black,
+        blurRadius: 35.0,
+        offset: Offset(2.0, 2.0),
+      ),
+    ];
+    const fewDetailsStyle = TextStyle(color: Colors.white, fontSize: 15.0, shadows: textShadows);
 
     return Scaffold(
       appBar: AppBar(
@@ -234,10 +244,16 @@ class HomeScreen extends StatelessWidget {
                                           children: [
                                             Expanded(
                                               child: TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  setState(() => isHourlyForecast = true);
+                                                },
                                                 style: TextButton.styleFrom(
-                                                  backgroundColor: Colors.brown.shade800,
-                                                  foregroundColor: Colors.white,
+                                                  backgroundColor: isHourlyForecast
+                                                      ? Colors.blue.shade900
+                                                      : Colors.white,
+                                                  foregroundColor: isHourlyForecast
+                                                      ? Colors.white
+                                                      : Colors.blue.shade900,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(10.0), // <-- Radius
@@ -249,10 +265,16 @@ class HomeScreen extends StatelessWidget {
                                             const SizedBox(width: 10.0),
                                             Expanded(
                                               child: TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  setState(() => isHourlyForecast = false);
+                                                },
                                                 style: TextButton.styleFrom(
-                                                  backgroundColor: Colors.white,
-                                                  foregroundColor: Colors.brown.shade800,
+                                                  backgroundColor: isHourlyForecast
+                                                      ? Colors.white
+                                                      : Colors.blue.shade900,
+                                                  foregroundColor: isHourlyForecast
+                                                      ? Colors.blue.shade900
+                                                      : Colors.white,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(10.0), // <-- Radius
@@ -267,11 +289,11 @@ class HomeScreen extends StatelessWidget {
                                           height: 160.0,
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
-                                            itemCount: 7,
+                                            itemCount: weatherProvider.forecastDay.length,
                                             itemBuilder: (_, idx) {
                                               return SizedBox(
                                                 child: Card(
-                                                  color: Colors.brown.shade200,
+                                                  color: Colors.blue.shade100,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(5.0), // <-- Radius

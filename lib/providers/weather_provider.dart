@@ -9,15 +9,22 @@ class WeatherProvider extends ChangeNotifier {
   String error = "";
   Location currentLocation = Location();
   Current currentWeatherInfo = Current();
+  List<ForecastDay> forecastDay = [];
   bool isLoading = true;
   static String weatherCondition = "";
 
   WeatherProvider() {
     getWeatherInfo();
+    getForecastInfo();
   }
 
-  Future<String> _getJsonData(String endpoint, String query) async {
-    final url = Uri.https(_baseUrl, endpoint, {'key': _apiKey, 'q': query});
+  Future<String> _getJsonData(String endpoint, String query, String days) async {
+    Uri url = Uri();
+    if (days.isEmpty) {
+      url = Uri.https(_baseUrl, endpoint, {'key': _apiKey, 'q': query});
+    } else {
+      url = Uri.https(_baseUrl, endpoint, {'key': _apiKey, 'q': query, 'days': days});
+    }
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -33,12 +40,20 @@ class WeatherProvider extends ChangeNotifier {
   }
 
   getWeatherInfo() async {
-    final jsonResult = await _getJsonData("v1/current.json", "Santo Domingo");
+    final jsonResult = await _getJsonData("v1/current.json", "Santo Domingo", "");
     final weatherInfoResponse = WeatherInfo.fromJson(json.decode(jsonResult));
     currentLocation = weatherInfoResponse.location;
     currentWeatherInfo = weatherInfoResponse.current;
     weatherCondition = currentWeatherInfo.condition!.text;
+
     isLoading = false;
+    notifyListeners();
+  }
+
+  getForecastInfo() async {
+    final jsonResult = await _getJsonData("v1/forecast.json", "Santo Domingo", "7");
+    final forecastResponse = Forecast.fromJson(json.decode(jsonResult));
+    forecastDay = forecastResponse.forecast.forecastday;
     notifyListeners();
   }
 }

@@ -22,7 +22,40 @@ class HomeScreen extends StatelessWidget {
         offset: Offset(2.0, 2.0),
       ),
     ];
+    Map<int, String> days = {
+      1: "Monday",
+      2: "Tuesday",
+      3: "Wednesday",
+      4: "Thursday",
+      5: "Friday",
+      6: "Saturday",
+      7: "Sunday"
+    };
+    Map<int, String> months = {
+      1: "January",
+      2: "February",
+      3: "March",
+      4: "April",
+      5: "May",
+      6: "June",
+      7: "July",
+      8: "August",
+      9: "September",
+      10: "October",
+      11: "November",
+      12: "December",
+    };
     const fewDetailsStyle = TextStyle(color: Colors.white, fontSize: 15.0, shadows: textShadows);
+    final locationDate = weatherProvider.currentLocation.localtime!.split(" ");
+    final updatedDate = weatherProvider.currentWeatherInfo.lastUpdated!.split(" ");
+    DateTime currentDate = DateTime.parse(locationDate[0]);
+    String currentStrDate =
+        "${days[currentDate.weekday]}, ${months[currentDate.month]} ${currentDate.day} ${currentDate.year}";
+    DateTime lastUpdatedDate = DateTime.parse(updatedDate[0]);
+    final time = updatedDate[1].split(":");
+    String dayTime = int.parse(time[0]) <= 11 ? "AM" : "PM";
+    String currentStrUpdatedDate =
+        "${lastUpdatedDate.month}/${lastUpdatedDate.day}/${lastUpdatedDate.year} ${updatedDate[1]}";
 
     return Scaffold(
       appBar: AppBar(
@@ -81,8 +114,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "Wednesday, November 22, 2023",
-                                style: TextStyle(
+                                currentStrDate,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 20.0,
                                   color: Colors.white,
@@ -90,8 +123,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "Updated 11/22/2023 03:05 PM",
-                                style: TextStyle(
+                                "Updated $currentStrUpdatedDate $dayTime",
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 10.0,
                                   color: Colors.white,
@@ -193,170 +226,86 @@ class HomeScreen extends StatelessWidget {
                                   color: Colors.white.withOpacity(0.5),
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: TextButton(
+                                                onPressed: () {},
+                                                style: TextButton.styleFrom(
+                                                  backgroundColor: Colors.brown.shade800,
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(10.0), // <-- Radius
+                                                  ),
                                                 ),
+                                                child: const Text("Hourly"),
                                               ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
+                                            ),
+                                            const SizedBox(width: 10.0),
+                                            Expanded(
+                                              child: TextButton(
+                                                onPressed: () {},
+                                                style: TextButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor: Colors.brown.shade800,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(10.0), // <-- Radius
+                                                  ),
                                                 ),
+                                                child: const Text("Daily"),
                                               ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
+                                        SizedBox(
+                                          height: 160.0,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: 7,
+                                            itemBuilder: (_, idx) {
+                                              return SizedBox(
+                                                child: Card(
+                                                  color: Colors.brown.shade200,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(5.0), // <-- Radius
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(10.0),
+                                                    child: Column(
+                                                      children: [
+                                                        Image(
+                                                          image: NetworkImage(
+                                                            "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "12 AM",
+                                                        ),
+                                                        Text(
+                                                          "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Icon(Icons.water_drop_rounded),
+                                                            Text(
+                                                                "${weatherProvider.currentWeatherInfo.humidity}%"),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
+                                              );
+                                            },
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
-                                                ),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
-                                                ),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
-                                                ),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Wed 16",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Image(
-                                                image: NetworkImage(
-                                                  "https:${weatherProvider.currentWeatherInfo.condition!.icon}",
-                                                ),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                              Text(
-                                                "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
-                                                style: TextStyle(fontSize: 12.0),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                   ),

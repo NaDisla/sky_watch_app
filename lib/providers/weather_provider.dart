@@ -12,6 +12,29 @@ class WeatherProvider extends ChangeNotifier {
   List<ForecastDay> forecastDay = [];
   bool isLoading = true;
   static String weatherCondition = "";
+  Map<int, String> days = {
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+    7: "Sunday"
+  };
+  Map<int, String> months = {
+    1: "January",
+    2: "February",
+    3: "March",
+    4: "April",
+    5: "May",
+    6: "June",
+    7: "July",
+    8: "August",
+    9: "September",
+    10: "October",
+    11: "November",
+    12: "December",
+  };
 
   WeatherProvider() {
     getWeatherInfo();
@@ -45,7 +68,16 @@ class WeatherProvider extends ChangeNotifier {
     currentLocation = weatherInfoResponse.location;
     currentWeatherInfo = weatherInfoResponse.current;
     weatherCondition = currentWeatherInfo.condition!.text;
-
+    final locationDate = currentLocation.localtime!.split(" ");
+    DateTime currentDate = DateTime.parse(locationDate[0]);
+    currentLocation.currentStrDate =
+        "${days[currentDate.weekday]}, ${months[currentDate.month]} ${currentDate.day} ${currentDate.year}";
+    final updatedDate = currentWeatherInfo.lastUpdated!.split(" ");
+    DateTime lastUpdatedDate = DateTime.parse(updatedDate[0]);
+    final time = updatedDate[1].split(":");
+    String dayTime = int.parse(time[0]) <= 11 ? "AM" : "PM";
+    currentWeatherInfo.currentStrUpdatedDate =
+        "${lastUpdatedDate.month}/${lastUpdatedDate.day}/${lastUpdatedDate.year} ${updatedDate[1]} $dayTime";
     isLoading = false;
     notifyListeners();
   }

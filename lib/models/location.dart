@@ -7,6 +7,7 @@ class Location {
   String? tzId;
   int? localtimeEpoch;
   String? localtime;
+  String? currentStrDate;
 
   Location({
     this.name,
@@ -29,15 +30,4 @@ class Location {
         localtimeEpoch: json["localtime_epoch"],
         localtime: json["localtime"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "region": region,
-        "country": country,
-        "lat": lat,
-        "lon": lon,
-        "tz_id": tzId,
-        "localtime_epoch": localtimeEpoch,
-        "localtime": localtime,
-      };
 }

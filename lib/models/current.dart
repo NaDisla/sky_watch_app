@@ -24,6 +24,7 @@ class Current {
   double? uv;
   double? gustMph;
   double? gustKph;
+  String? currentStrUpdatedDate;
 
   Current({
     this.lastUpdatedEpoch,

@@ -11,6 +11,7 @@ class Day {
   double maxwindKph;
   double totalprecipMm;
   double totalprecipIn;
+  double avghumidity;
   Condition condition;
   double uv;
 
@@ -25,6 +26,7 @@ class Day {
     required this.maxwindKph,
     required this.totalprecipMm,
     required this.totalprecipIn,
+    required this.avghumidity,
     required this.condition,
     required this.uv,
   });
@@ -40,6 +42,7 @@ class Day {
         maxwindKph: json["maxwind_kph"]?.toDouble(),
         totalprecipMm: json["totalprecip_mm"]?.toDouble(),
         totalprecipIn: json["totalprecip_in"]?.toDouble(),
+        avghumidity: json["avghumidity"]?.toDouble(),
         condition: Condition.fromJson(json["condition"]),
         uv: json["uv"],
       );

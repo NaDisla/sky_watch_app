@@ -24,20 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
     6: "Saturday",
     7: "Sunday"
   };
-  Map<int, String> months = {
-    1: "January",
-    2: "February",
-    3: "March",
-    4: "April",
-    5: "May",
-    6: "June",
-    7: "July",
-    8: "August",
-    9: "September",
-    10: "October",
-    11: "November",
-    12: "December",
-  };
+
+  String setDayTime(String date) {
+    int hour = int.parse(date.split(" ")[1].split(":")[0]);
+    return hour <= 11 ? "$hour AM" : "$hour PM";
+  }
+
+  String setWeekDay(DateTime date) {
+    return "${days[date.weekday]} ${date.day}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final backgroundImageProvider = Provider.of<BackgroundImageProvider>(context);
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    final locationDate = //weatherProvider.currentLocation.localtime ??
-        "2023-11-26 21:54".split(" "); //weatherProvider.currentLocation.localtime.split(" ");
-    final updatedDate = //weatherProvider.currentWeatherInfo.lastUpdated ??
-        "2023-11-26 21:58".split(" "); //weatherProvider.currentWeatherInfo.lastUpdated.split(" ");
-    DateTime currentDate = DateTime.parse(locationDate[0]);
-    String currentStrDate =
-        "${days[currentDate.weekday]}, ${months[currentDate.month]} ${currentDate.day} ${currentDate.year}";
-    DateTime lastUpdatedDate = DateTime.parse(updatedDate[0]);
-    final time = updatedDate[1].split(":");
-    String dayTime = int.parse(time[0]) <= 11 ? "AM" : "PM";
-    String currentStrUpdatedDate =
-        "${lastUpdatedDate.month}/${lastUpdatedDate.day}/${lastUpdatedDate.year} ${updatedDate[1]}";
-
     const textShadows = [
       Shadow(
         color: Colors.black,
@@ -124,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               Text(
-                                currentStrDate,
+                                weatherProvider.currentLocation.currentStrDate!,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 20.0,
@@ -133,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               Text(
-                                "Updated $currentStrUpdatedDate $dayTime",
+                                "Updated ${weatherProvider.currentWeatherInfo.currentStrUpdatedDate}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 10.0,
@@ -161,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     TextSpan(
                                       text: weatherProvider.currentWeatherInfo.tempC!
-                                          .toInt()
+                                          .round()
                                           .toString(),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
@@ -209,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: Colors.white, size: 30.0),
                                       const Text("Wind", style: fewDetailsStyle),
                                       Text(
-                                        "${weatherProvider.currentWeatherInfo.windKph!.toInt().toString()}km/h",
+                                        "${weatherProvider.currentWeatherInfo.windKph!.round()}km/h",
                                         style: fewDetailsStyle,
                                       ),
                                     ],
@@ -289,7 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           height: 160.0,
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
-                                            itemCount: weatherProvider.forecastDay.length,
+                                            itemCount: isHourlyForecast
+                                                ? weatherProvider.forecastDay[0].hour.length
+                                                : weatherProvider.forecastDay.length,
                                             itemBuilder: (_, idx) {
                                               return SizedBox(
                                                 child: Card(
@@ -308,16 +292,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ),
                                                         ),
                                                         Text(
-                                                          "12 AM",
+                                                          isHourlyForecast
+                                                              ? setDayTime(weatherProvider
+                                                                  .forecastDay[0].hour[idx].time)
+                                                              : setWeekDay(weatherProvider
+                                                                  .forecastDay[idx].date),
                                                         ),
                                                         Text(
-                                                          "${weatherProvider.currentWeatherInfo.tempC!.toInt().toString()}\u00B0",
+                                                          isHourlyForecast
+                                                              ? "${weatherProvider.forecastDay[0].hour[idx].tempC.round()}\u00B0"
+                                                              : "${weatherProvider.forecastDay[idx].day.avgtempC.round()}\u00B0",
                                                         ),
                                                         Row(
                                                           children: [
-                                                            Icon(Icons.water_drop_rounded),
+                                                            const Icon(Icons.water_drop_rounded),
                                                             Text(
-                                                                "${weatherProvider.currentWeatherInfo.humidity}%"),
+                                                              isHourlyForecast
+                                                                  ? "${weatherProvider.forecastDay[0].hour[idx].humidity.round()}%"
+                                                                  : "${weatherProvider.forecastDay[idx].day.avghumidity.round()}%",
+                                                            )
                                                           ],
                                                         )
                                                       ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sky_watch_app/models/models.dart';
 import 'package:sky_watch_app/providers/providers.dart';
@@ -144,19 +143,20 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: 120,
-                                      child: Lottie.asset(
-                                        'assets/lottie_images/mist-weather.json',
-                                        width: 100.0,
-                                        height: 100.0,
+                                    Image(
+                                      image: NetworkImage(
+                                        "https:${foundLocations[idx].current!.condition!.icon}",
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed: () => weatherProvider.setSavedLocations(
-                                          weatherProvider.locationsSavedStr,
-                                          weatherProvider.locationsSaved[idx],
-                                          "remove"),
+                                      onPressed: () {
+                                        weatherProvider.setSavedLocations(
+                                            weatherProvider.locationsSavedStr,
+                                            weatherProvider.locationsSaved[idx],
+                                            "remove");
+                                        setState(() => foundLocations
+                                            .remove(weatherProvider.locationsSaved[idx]));
+                                      },
                                       icon: const Icon(Icons.remove, color: Colors.black),
                                     ),
                                   ],

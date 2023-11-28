@@ -346,6 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: Form(
                                             key: cityKey,
                                             child: TextFormField(
+                                              style: const TextStyle(color: Colors.white),
                                               textCapitalization: TextCapitalization.words,
                                               controller: cityController,
                                               decoration: InputDecoration(

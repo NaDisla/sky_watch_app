@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sky_watch_app/models/models.dart';
 
 class WeatherProvider extends ChangeNotifier {
@@ -12,6 +13,10 @@ class WeatherProvider extends ChangeNotifier {
   List<ForecastDay> forecastDay = [];
   bool isLoading = true;
   static String weatherCondition = "";
+  List<WeatherInfo> locationsSaved = [];
+  List<String> locationsSavedStr = [];
+  WeatherInfo weatherInfo = WeatherInfo();
+  bool isSaved = false;
   Map<int, String> days = {
     1: "Monday",
     2: "Tuesday",
@@ -39,6 +44,7 @@ class WeatherProvider extends ChangeNotifier {
   WeatherProvider() {
     getWeatherInfo();
     getForecastInfo();
+    getSavedLocations();
   }
 
   Future<String> _getJsonData(String endpoint, String query, String days) async {
@@ -65,8 +71,9 @@ class WeatherProvider extends ChangeNotifier {
   getWeatherInfo({String city = "New York"}) async {
     final jsonResult = await _getJsonData("v1/current.json", city, "");
     final weatherInfoResponse = WeatherInfo.fromJson(json.decode(jsonResult));
-    currentLocation = weatherInfoResponse.location;
-    currentWeatherInfo = weatherInfoResponse.current;
+    currentLocation = weatherInfoResponse.location!;
+    currentWeatherInfo = weatherInfoResponse.current!;
+    weatherInfo = weatherInfoResponse;
     weatherCondition = currentWeatherInfo.condition!.text;
     final locationDate = currentLocation.localtime!.split(" ");
     DateTime currentDate = DateTime.parse(locationDate[0]);
@@ -87,5 +94,31 @@ class WeatherProvider extends ChangeNotifier {
     final forecastResponse = Forecast.fromJson(json.decode(jsonResult));
     forecastDay = forecastResponse.forecast.forecastday;
     notifyListeners();
+  }
+
+  static String weatherInfoToMap(WeatherInfo weatherInfo) {
+    Map<String, dynamic> weatherInfoMap = WeatherInfo.toJson(weatherInfo);
+    String jsonWeatherInfo = jsonEncode(weatherInfoMap);
+    return jsonWeatherInfo;
+  }
+
+  getSavedLocations() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> locationsSavedStr = prefs.getStringList("savedLocations") ?? [];
+    locationsSaved = locationsSavedStr.map((map) => WeatherInfo.fromJson(jsonDecode(map))).toList();
+    notifyListeners();
+  }
+
+  setSavedLocations(List<String> savedLocations, WeatherInfo weatherInfo, String action) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (action == "add") {
+      savedLocations.add(weatherInfoToMap(weatherInfo));
+    } else {
+      savedLocations.remove(weatherInfoToMap(weatherInfo));
+    }
+    await prefs.setStringList("savedLocations", savedLocations);
+    locationsSaved = savedLocations.map((map) => WeatherInfo.fromJson(jsonDecode(map))).toList();
+    notifyListeners();
+    //FavoritesBooksWidgetState.favoritesBooks.value = favBooks;
   }
 }
